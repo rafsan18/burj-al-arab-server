@@ -1,6 +1,14 @@
 const express = require("express");
-const app = express();
+
+const bodyParser = require("body-parser");
+const cors = require("cors");
+
 const port = 5000;
+
+const app = express();
+
+app.use(cors());
+app.use(bodyParser.json());
 
 const password = "aZXjq38M9CEbx86";
 
@@ -17,9 +25,16 @@ app.get("/", (req, res) => {
 });
 
 client.connect((err) => {
-    const collection = client.db("burjAlArab").collection("bookings");
+    const bookings = client.db("burjAlArab").collection("bookings");
     console.log("db connected successfully");
-    client.close();
+    // create
+    app.post("/addBooking", (req, res) => {
+        const newBooking = req.body;
+        bookings.insertOne(newBooking).then((result) => {
+            res.send(result.insertedCount > 0);
+        });
+        console.log(newBooking);
+    });
 });
 
 app.listen(port);
