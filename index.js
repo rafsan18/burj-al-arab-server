@@ -4,7 +4,10 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const admin = require("firebase-admin");
-
+const MongoClient = require("mongodb").MongoClient;
+require("dotenv").config();
+console.log(process.env.DB_PASS);
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.mypty.mongodb.net/burjAlArab?retryWrites=true&w=majority`;
 const port = 5000;
 
 const app = express();
@@ -12,25 +15,16 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const serviceAccount = require("./burj-al-arab-dc701-firebase-adminsdk-pwhdk-126df3b9a2.json");
+const serviceAccount = require("./configs/burj-al-arab-dc701-firebase-adminsdk-pwhdk-126df3b9a2.json");
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://burj-al-arab-dc701.firebaseio.com",
+    databaseURL: process.env.FIRE_DB,
 });
 
-const password = "aZXjq38M9CEbx86";
-
-const MongoClient = require("mongodb").MongoClient;
-const uri =
-    "mongodb+srv://hotelUser:aZXjq38M9CEbx86@cluster0.mypty.mongodb.net/burjAlArab?retryWrites=true&w=majority";
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-});
-
-app.get("/", (req, res) => {
-    res.send("Hello World!");
 });
 
 client.connect((err) => {
